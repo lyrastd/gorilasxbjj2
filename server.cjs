@@ -30,8 +30,34 @@ var app = (0, import_express.default)();
 var PORT = 3e3;
 app.use(import_express.default.json({ limit: "10mb" }));
 app.use("/assets", import_express.default.static(import_path.default.join(process.cwd(), "src/assets")));
-var logoDir = import_path.default.join(process.cwd(), "logo");
-var logo2Dir = import_path.default.join(process.cwd(), "logo2");
+var resolveLogoDirs = () => {
+  const paths = [
+    import_path.default.join(process.cwd(), "public/logo"),
+    import_path.default.join(process.cwd(), "dist/logo"),
+    import_path.default.join(process.cwd(), "logo")
+  ];
+  const paths2 = [
+    import_path.default.join(process.cwd(), "public/logo2"),
+    import_path.default.join(process.cwd(), "dist/logo2"),
+    import_path.default.join(process.cwd(), "logo2")
+  ];
+  let selectedLogoDir = paths[0];
+  for (const p of paths) {
+    if (import_fs.default.existsSync(p)) {
+      selectedLogoDir = p;
+      break;
+    }
+  }
+  let selectedLogo2Dir = paths2[0];
+  for (const p of paths2) {
+    if (import_fs.default.existsSync(p)) {
+      selectedLogo2Dir = p;
+      break;
+    }
+  }
+  return { logoDir: selectedLogoDir, logo2Dir: selectedLogo2Dir };
+};
+var { logoDir, logo2Dir } = resolveLogoDirs();
 if (!import_fs.default.existsSync(logoDir)) {
   import_fs.default.mkdirSync(logoDir, { recursive: true });
 }
